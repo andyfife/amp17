@@ -1,21 +1,17 @@
 version: 1
-backend:
-  phases:
-    build:
-      commands:
-        - npm ci --cache .npm --prefer-offline
-        - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
 frontend:
   phases:
+    preBuild:
+      commands:
+        - npm ci --legacy-peer-deps # Fixes React/Amplify dep conflict
     build:
       commands:
-        - npm run build
+        - npm run build # Your Next.js build script
   artifacts:
-    baseDirectory: .next
+    baseDirectory: .next # SSR output dir
     files:
       - '**/*'
   cache:
     paths:
-      - .next/cache/**/*
-      - .npm/**/*
-      - node_modules/**/*
+      - node_modules/**/* # Cache deps for faster builds
+      - .next/cache/**/* # Next.js cache
